@@ -124,7 +124,7 @@ var Carillon = {
                 './lsb/895.wav'
             ].shuffle()[0];
         } else {
-            'doxology.wav'; //not a holiday, play the doxology
+            return './doxology.wav'; //not a holiday, play the doxology
         }
     },
     
