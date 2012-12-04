@@ -69,7 +69,70 @@ Date.prototype.thanksgiving = function() {
     return this._thanksgiving_cache; //return cached Thanksgiving day for this year 
 };
 
-Array.prototype.shuffle = function () {
+Date.prototype.advent = function() {
+    if(typeof this._advent_cache == 'undefined') { //if Advent Sunday is not cached
+        var m = [ //Advent Sunday month in relation to doomsday
+            10, //Sunday
+            10, //Monday
+            11, //Tuesday
+            11, //Wednesday
+            11, //Thursday
+            10, //Friday
+            10, //Saturday
+        ];
+        var t = [ //Advent Sunday in relation to doomsday
+            28, //Sunday
+            27, //Monday
+            3, //Tuesday
+            2, //Wednesday
+            1, //Thursday
+            30, //Friday
+            29, //Saturday
+        ];
+        this._advent_cache = new Date(this.getFullYear(), m[this.doomsday()], t[this.doomsday()]); //calculate and cache Advent Sunday
+    }
+    
+    return this._advent_cache; //return cached Thanksgiving day for this year 
+};
+
+Date.prototype.christmas = function() {
+    return new Date(this.getFullYear(), 11, 25); //Christmas day for this year
+};
+
+Date.prototype.newyear = function() {
+    return new Date(this.getFullYear()+1, 0, 1); //New years day (next year)
+};
+
+Date.prototype.diff = function(date, multiplier) { //find the difference between two dates
+    if(typeof multiplier == 'undefined') {
+        multiplier = 'ms';
+    }
+    
+    var mult = {
+        'ms': 1,
+        'sec': 1000,
+        'min': 1000*60,
+        'hour': 1000*60*60,
+        'day': 1000*60*60*24,
+        'week': 1000*60*60*24*7
+    };
+    
+    return (date.getTime() - this.getTime())/mult[multiplier];
+};
+
+Date.prototype.inRange = function(start, end) { //check if a date is in-between two dates
+    var _ir = false;
+    
+    for(var i = 0; i<=start.diff(end, 'day'); i++) {
+        if(this.equals(start.plus(i, 'day'))) {
+            _ir = true;
+        }
+    }
+    
+    return _ir;
+};
+
+Array.prototype.shuffle = function () { //shuffle an Array
     for (var i = this.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var tmp = this[i];
@@ -83,6 +146,7 @@ Array.prototype.shuffle = function () {
 var d = new Date();
 console.log('Playing on hours: '+playHours);
 console.log('Doomsday: ' + d.doomsday());
+console.log('Advent sunday: ' + d.advent());
 console.log('Thanksgiving: ' + d.thanksgiving());
 console.log('Black Friday: ' + d.thanksgiving().plus(1, 'day'));
 
@@ -115,14 +179,31 @@ var Carillon = {
     soundfile: function () {
         var d = new Date().stripTime();
         
-        //play thanksgiving music on Wednesday, Thursday, Friday, and Saturday
-        if(d.equals(d.thanksgiving()) || d.equals(d.thanksgiving().plus(-1, 'day')) || d.equals(d.thanksgiving().plus(1, 'day')) || d.equals(d.thanksgiving().plus(2, 'day'))) {
+        //play Thanksgiving music on Wednesday, Thursday, Friday, and Saturday
+        if(d.inRange(d.thanksgiving().plus(-1, 'day'), d.thanksgiving().plus(2, 'day'))) {
             return [ //play some random Thanksgiving music
                 './lsb/782.wav',
                 './lsb/785.wav',
                 './lsb/892.wav',
                 './lsb/895.wav'
             ].shuffle()[0];
+        
+        //play Advent music from Advent Sunday - five days before Christmas
+        } else if(d.inRange(d.advent(), d.christmas().plus(-5, 'day'))) {
+            return [ //play some random Advent music
+                './lsb/331.wav',
+                './lsb/332.wav',
+                './lsb/332.wav'
+            ].shuffle()[0];
+        
+        //play Christmas music from four days before Christmas - the day before new years
+        } else if(d.inRange(d.christmas().plus(-4, 'day'), d.newyears().plus(-1, 'day'))) {
+            return [ //play some random Christmas music
+                //'./lsb/331.wav',
+                //'./lsb/332.wav',
+                //'./lsb/332.wav'
+            ].shuffle()[0];
+        
         } else {
             return './doxology.wav'; //not a holiday, play the doxology
         }
