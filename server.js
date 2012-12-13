@@ -193,15 +193,22 @@ var Carillon = {
             return [ //play some random Advent music
                 './lsb/331.wav',
                 './lsb/332.wav',
+                './lsb/357.wav',
                 './lsb/332.wav'
             ].shuffle()[0];
         
         //play Christmas music from four days before Christmas - the day before new years
         } else if(d.inRange(d.christmas().plus(-4, 'day'), d.newyears().plus(-1, 'day'))) {
             return [ //play some random Christmas music
-                //'./lsb/331.wav',
-                //'./lsb/332.wav',
-                //'./lsb/332.wav'
+                './lsb/361.wav',
+                './lsb/363.wav',
+                './lsb/368.wav',
+                './lsb/370.wav',
+                './lsb/379.wav',
+                './lsb/380.wav',
+                './lsb/387.wav',
+                './lsb/388.wav',
+                './lsb/390.wav'
             ].shuffle()[0];
         
         } else {
