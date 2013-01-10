@@ -99,7 +99,7 @@ Date.prototype.christmas = function() {
     return new Date(this.getFullYear(), 11, 25); //Christmas day for this year
 };
 
-Date.prototype.newyear = function() {
+Date.prototype.newyears = function() {
     return new Date(this.getFullYear()+1, 0, 1); //New years day (next year)
 };
 
