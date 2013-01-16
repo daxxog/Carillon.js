@@ -212,7 +212,10 @@ var Carillon = {
             ].shuffle()[0];
         
         } else {
-            return './doxology.wav'; //not a holiday, play the doxology
+            return [ //not a holiday
+                './doxology.wav',
+                './lsb/657.wav' //"A Mighty Fortress Is Our God"
+            ].shuffle()[0];
         }
     },
     
