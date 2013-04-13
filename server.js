@@ -4,7 +4,7 @@ var express = require('express'),
     async = require('async'),
     exec = require('child_process').exec;
 
-var adjhour = -1;
+var adjhour = -5;
 
 var playHours = function() {
     var ar = [];
