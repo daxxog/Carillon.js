@@ -15,7 +15,7 @@ var playHours = function() {
 }();
 
 Date.prototype.equals = function(date) { //check if a date(time) equals another date(time)
-    return this.getTime() == date.getTime();
+    return this.getTime() === date.getTime();
 };
 
 Date.prototype.stripTime = function() { //remove the time from a date
@@ -132,6 +132,47 @@ Date.prototype.inRange = function(start, end) { //check if a date is in-between 
     return _ir;
 };
 
+var _fDST = (function() {
+    var arr = [],
+        _arr = [],
+        d = new Date();
+        leap = new Date(d.getFullYear(), 1, 29).getMonth() == 1;
+    
+    for (var i = 0; i < (leap ? 366 : 365); i++) {
+        d = new Date();
+        d.setDate(i);
+        newoffset = d.getTimezoneOffset();
+        arr.push(newoffset);
+    }
+    
+    var max = Math.max.apply(null, arr),
+        min = Math.min.apply(null, arr),
+        diff = max - min;
+    
+    arr.forEach(function(v, i, a) {
+        if(v === min) {
+            _arr.push(diff);
+        } else {
+            _arr.push(0);
+        }
+    });
+    
+    return _arr;
+})();
+
+Date.prototype.getDayOfYear = function() {
+    var yn = this.getFullYear();
+    var mn = this.getMonth();
+    var dn = this.getDate();
+    var d1 = +new Date(yn, 0, 1, 12, 0, 0);
+    var d2 = +new Date(yn, mn, dn, 12, 0, 0);
+    return Math.round((d2 - d1) / 864e5) + 1;
+};
+
+Date.prototype.applyDST = function() {
+    return new Date((+this) - (_fDST[this.getDayOfYear() - 1] * 60 * 1000));
+};
+
 Array.prototype.shuffle = function () { //shuffle an Array
     for (var i = this.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -236,7 +277,7 @@ var Carillon = {
     },
     
     _fetchHour: function() {
-        return (new Date()).getHours() + adjhour;
+        return (new Date()).applyDST().getHours() + adjhour;
     },
     
     fetchHour: function() {
