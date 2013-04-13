@@ -4,7 +4,37 @@ var express = require('express'),
     async = require('async'),
     exec = require('child_process').exec;
 
-var adjhour = -5;
+/* CST */
+var adjhour = -6,
+    _fDST = [60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60];
+
+/*var _fDST = JSON.stringify((function() {
+    var arr = [],
+        _arr = [],
+        d = new Date();
+        leap = new Date(d.getFullYear(), 1, 29).getMonth() == 1;
+    
+    for (var i = 0; i < (leap ? 366 : 365); i++) {
+        d = new Date();
+        d.setDate(i);
+        newoffset = d.getTimezoneOffset();
+        arr.push(newoffset);
+    }
+    
+    var max = Math.max.apply(null, arr),
+        min = Math.min.apply(null, arr),
+        diff = max - min;
+    
+    arr.forEach(function(v, i, a) {
+        if(v === min) {
+            _arr.push(diff);
+        } else {
+            _arr.push(0);
+        }
+    });
+    
+    return _arr;
+})());*/
 
 var playHours = function() {
     var ar = [];
@@ -132,34 +162,6 @@ Date.prototype.inRange = function(start, end) { //check if a date is in-between 
     return _ir;
 };
 
-var _fDST = (function() {
-    var arr = [],
-        _arr = [],
-        d = new Date();
-        leap = new Date(d.getFullYear(), 1, 29).getMonth() == 1;
-    
-    for (var i = 0; i < (leap ? 366 : 365); i++) {
-        d = new Date();
-        d.setDate(i);
-        newoffset = d.getTimezoneOffset();
-        arr.push(newoffset);
-    }
-    
-    var max = Math.max.apply(null, arr),
-        min = Math.min.apply(null, arr),
-        diff = max - min;
-    
-    arr.forEach(function(v, i, a) {
-        if(v === min) {
-            _arr.push(diff);
-        } else {
-            _arr.push(0);
-        }
-    });
-    
-    return _arr;
-})();
-
 Date.prototype.getDayOfYear = function() {
     var yn = this.getFullYear();
     var mn = this.getMonth();
@@ -170,7 +172,7 @@ Date.prototype.getDayOfYear = function() {
 };
 
 Date.prototype.applyDST = function() {
-    return new Date((+this) - (_fDST[this.getDayOfYear() - 1] * 60 * 1000));
+    return new Date((+this) + (_fDST[this.getDayOfYear() - 1] * 60 * 1000));
 };
 
 Array.prototype.shuffle = function () { //shuffle an Array
